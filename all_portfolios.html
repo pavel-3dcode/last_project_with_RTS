@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Все портфолио</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<form method="GET" style="max-width: 80%; margin: 20px auto; text-align:center;">
+    <select class="form-select" name="skill" onchange="this.form.submit()">
+        <option value="">-- Все навыки --</option>
+        {% for tech in tool_icons %}
+            <option value="{{ tech }}"
+                {% if current_skill == tech.lower() %}selected{% endif %}>
+                {{ tool_icons[tech] }} {{ tech }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+    <div class="all-portfolio-container">
+        <h1 class="all-title">Все портфолио</h1>
+        <div style="display: none;">
+            <h3>Данные из базы (отладка):</h3>
+            <pre>{{ portfolios }}</pre>
+        </div>
+
+        <div class="grid">
+            {% for user in portfolios %}
+            <div class="card">
+                <img src="{{ url_for('static', filename=user.avatar) if user.avatar else url_for('static', filename='placeholder.png') }}"
+                     alt="{{ user.name }}"
+                     onerror="this.src='{{ url_for('static', filename='placeholder.png') }}'">
+                <a href="{{ url_for('view_portfolio', uid=user.uuid) }}" target="_blank">{{ user.name }}</a>
+                <p class="bio-preview">{{ user.bio }}</p>
+<!--                <p><b>Навыки:</b> {{ user.skills }}</p>-->
+                <div class="skills">
+                    {% for skill in user.skills %}
+                        <a href="{{ url_for('index') }}?skill={{ skill }}" class="skill-chip">
+                            {{ tool_icons.get(skill, "✨") }} {{ skill }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="no-users">
+                <p>Пользователей пока нет.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{{ url_for('generate') }}" class="button-secondary">Создать новое портфолио</a>
+    </div>
+
+    <script>
+        console.log('Portfolios data:', {{ portfolios | tojson }});
+    </script>
+</body>
+</html>

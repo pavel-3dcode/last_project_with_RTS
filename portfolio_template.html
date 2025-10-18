@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ user.name }} | Портфолио</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <!-- Левая часть -->
+    <div class="profile">
+      <img class="avatar" src="{{ url_for('static', filename=user.avatar) if user.avatar else url_for('static', filename='placeholder.png') }}"
+           alt="{{ user.name }}"
+           onerror="this.src='{{ url_for('static', filename='placeholder.png') }}'">
+      <h1>{{ user.name }}</h1>
+      <p>{{ user.bio }}</p>
+
+      {% if user.telegram %}
+      <div style="margin-top: 10px;">
+        <a href="https://t.me/{{ user.telegram }}" target="_blank" title="Открыть Telegram">
+          <span class="badge">✈️ Telegram</span>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Правая часть -->
+    <div class="info">
+      <h2>Навыки</h2>
+      <ul class="skills">
+        {% for skill in user.skills %}
+          <li>{{ skill }}</li>
+        {% endfor %}
+      </ul>
+
+      <h2>Инструменты</h2>
+      <ul>
+          {% for tech, icon in tool_icons.items() %}
+              {% if tech in user.skills %}
+                  <li class="badge">{{ icon }} {{ tech }}</li>
+              {% endif %}
+          {% endfor %}
+      </ul>
+
+      <h2>Проекты</h2>
+      <div class="projects">
+        {% for project in user.projects %}
+        <div class="project-box">
+          <h3>{{ project.title }}</h3>
+          <p>{{ project.description }}</p>
+          <a href="{{ project.link }}" target="_blank">Перейти →</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
